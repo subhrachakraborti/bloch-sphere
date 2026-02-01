@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+MIT License
+Copyright (c) 2025 Subhra Chakraborti
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About · Bloch Sphere Lab</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page" data-theme="dark">
+      <header class="site-header">
+        <div class="logo">Bloch Sphere Lab</div>
+        <nav class="nav">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link active" href="about.html">About</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span>Theme</span>
+          <span class="toggle-indicator"></span>
+        </button>
+      </header>
+
+      <main class="about">
+        <section class="about-hero">
+          <p class="eyebrow">Bloch Sphere Foundations</p>
+          <h1>Understand qubits, rotations, and quantum gates.</h1>
+          <p class="lead">
+            The Bloch Sphere is the most intuitive way to visualize a single qubit. It
+            represents every pure quantum state as a point on a unit sphere. This guide
+            pairs the geometry with the math behind quantum gates so you can read and
+            design qubit transformations.
+          </p>
+        </section>
+
+        <section class="content-grid">
+          <article class="content-card">
+            <h2>What is the Bloch Sphere?</h2>
+            <p>
+              A qubit state can be written as |ψ⟩ = cos(θ/2)|0⟩ + e^{iφ} sin(θ/2)|1⟩.
+              The angles θ and φ locate the state on the surface of a unit sphere. The
+              north pole is |0⟩, the south pole is |1⟩, and the equator contains equal
+              superpositions. The global phase is not observable, so each physical state
+              maps to a unique point on the sphere.
+            </p>
+            <p>
+              The Bloch vector (x, y, z) is given by x = sin θ cos φ, y = sin θ sin φ,
+              z = cos θ. Visualizing gates as rotations around the axes makes it easier
+              to reason about quantum algorithms.
+            </p>
+          </article>
+
+          <article class="content-card">
+            <h2>Core Quantum Gates</h2>
+            <p>
+              Single-qubit gates are 2×2 unitary matrices. They rotate the state vector
+              around the Bloch Sphere without changing its length.
+            </p>
+            <ul>
+              <li><strong>Pauli-X</strong>: flips |0⟩ and |1⟩ (rotation about the x-axis).</li>
+              <li><strong>Pauli-Y</strong>: rotates around the y-axis with a phase shift.</li>
+              <li><strong>Pauli-Z</strong>: adds a phase to |1⟩ (rotation about the z-axis).</li>
+              <li><strong>Hadamard</strong>: maps |0⟩ to |+⟩ and |1⟩ to |−⟩ (rotation between z and x).</li>
+              <li><strong>Phase (S, T)</strong>: fractional rotations around the z-axis.</li>
+            </ul>
+          </article>
+
+          <article class="content-card">
+            <h2>Gate Matrices</h2>
+            <div class="matrix-grid">
+              <div>
+                <h3>Pauli-X</h3>
+                <pre>[[0, 1],
+ [1, 0]]</pre>
+              </div>
+              <div>
+                <h3>Pauli-Y</h3>
+                <pre>[[0, -i],
+ [i, 0]]</pre>
+              </div>
+              <div>
+                <h3>Pauli-Z</h3>
+                <pre>[[1, 0],
+ [0, -1]]</pre>
+              </div>
+              <div>
+                <h3>Hadamard</h3>
+                <pre>1/√2 · [[1, 1],
+        [1, -1]]</pre>
+              </div>
+              <div>
+                <h3>Phase S</h3>
+                <pre>[[1, 0],
+ [0, i]]</pre>
+              </div>
+              <div>
+                <h3>Phase T</h3>
+                <pre>[[1, 0],
+ [0, e^{iπ/4}]]</pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="content-card">
+            <h2>How Gates Rotate the Sphere</h2>
+            <p>
+              Gates correspond to rotations of the Bloch vector: X rotates 180° around
+              the x-axis, Y rotates 180° around the y-axis, and Z rotates 180° around the
+              z-axis. The Hadamard gate rotates the state about the axis (x + z)/√2,
+              swapping the z- and x-axes. Phase gates S and T rotate about the z-axis by
+              90° and 45° respectively.
+            </p>
+            <p>
+              Because the state vector stays on the sphere surface, pure states always
+              have a length of 1. Any decoherence or measurement would move the state
+              inward toward the center, representing a mixed state.
+            </p>
+          </article>
+
+          <article class="content-card">
+            <h2>Measurement Probabilities</h2>
+            <p>
+              Measuring in the computational basis yields P(|0⟩) = |α|² and P(|1⟩) = |β|².
+              In the x-basis (|+⟩, |−⟩), probabilities depend on the projection onto the
+              x-axis. The visualization shows these outcomes directly from the state
+              vector so you can compare geometry with the math.
+            </p>
+          </article>
+
+          <article class="content-card">
+            <h2>Beginner Tips</h2>
+            <ul>
+              <li>Start at |0⟩ and apply X, Y, Z to see axis rotations.</li>
+              <li>Use Hadamard to create equal superpositions on the equator.</li>
+              <li>Phase gates spin the vector around the vertical axis without changing probabilities.</li>
+              <li>Adjust θ and φ to see how amplitudes and phases change together.</li>
+            </ul>
+          </article>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-content">
+          <div>
+            <span id="footerYear"></span> · An independent project inspired from Blochy by kherb27
+          </div>
+          <div>
+            <a href="https://github.com/kherb27/Blochy" target="_blank" rel="noreferrer">
+              Original Blochy Repository
+            </a>
+          </div>
+          <div>by Subhra Chakraborti</div>
+          <div>
+            <a href="LICENSE.md" target="_blank" rel="noreferrer">MIT License</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module">
+      import { initThemeToggle, setCurrentYear } from './js/utils.js';
+
+      initThemeToggle();
+      setCurrentYear();
+    </script>
+  </body>
+</html>

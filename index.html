@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!--
+MIT License
+Copyright (c) 2025 Subhra Chakraborti
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bloch Sphere Lab</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page" data-theme="dark">
+      <header class="site-header">
+        <div class="logo">Bloch Sphere Lab</div>
+        <nav class="nav">
+          <a class="nav-link active" href="index.html">Home</a>
+          <a class="nav-link" href="about.html">About</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <span>Theme</span>
+          <span class="toggle-indicator"></span>
+        </button>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-text">
+            <p class="eyebrow">Interactive Quantum Visualization</p>
+            <h1>Explore quantum states on the Bloch Sphere.</h1>
+            <p class="lead">
+              Rotate, measure, and apply quantum gates in real time. Discover how qubits
+              evolve with intuitive 3D visualization and crisp numerical readouts.
+            </p>
+            <div class="state-summary">
+              <div>
+                <span class="label">State (computational basis)</span>
+                <p id="stateComp" class="value"></p>
+              </div>
+              <div>
+                <span class="label">State (Hadamard basis)</span>
+                <p id="stateHadamard" class="value"></p>
+              </div>
+              <div>
+                <span class="label">State (Y basis)</span>
+                <p id="stateY" class="value"></p>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="canvas-wrapper">
+              <canvas id="blochCanvas" aria-label="3D Bloch sphere visualization"></canvas>
+            </div>
+            <div class="coordinates">
+              <div>
+                <span class="label">θ</span>
+                <span id="thetaValue" class="value"></span>
+              </div>
+              <div>
+                <span class="label">φ</span>
+                <span id="phiValue" class="value"></span>
+              </div>
+              <div>
+                <span class="label">Vector</span>
+                <span id="vectorValue" class="value"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="controls">
+          <div class="control-card">
+            <h2>State Controls</h2>
+            <label for="presetState">Preset state</label>
+            <select id="presetState">
+              <option value="zero">|0⟩</option>
+              <option value="one">|1⟩</option>
+              <option value="plus">|+⟩</option>
+              <option value="minus">|-⟩</option>
+              <option value="plusI">|i⟩</option>
+              <option value="minusI">|-i⟩</option>
+              <option value="custom" selected>Custom</option>
+            </select>
+            <div class="slider-group">
+              <label for="thetaSlider">Polar angle θ</label>
+              <input id="thetaSlider" type="range" min="0" max="180" value="45" />
+            </div>
+            <div class="slider-group">
+              <label for="phiSlider">Azimuthal angle φ</label>
+              <input id="phiSlider" type="range" min="0" max="360" value="45" />
+            </div>
+          </div>
+
+          <div class="control-card">
+            <h2>Quantum Gates</h2>
+            <p class="muted">Apply single-qubit gates and watch the state rotate.</p>
+            <div class="gate-grid">
+              <button class="gate-btn" data-gate="X">Pauli-X</button>
+              <button class="gate-btn" data-gate="Y">Pauli-Y</button>
+              <button class="gate-btn" data-gate="Z">Pauli-Z</button>
+              <button class="gate-btn" data-gate="H">Hadamard</button>
+              <button class="gate-btn" data-gate="S">Phase S</button>
+              <button class="gate-btn" data-gate="T">Phase T</button>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <h2>Measurement Outcomes</h2>
+            <div class="probabilities">
+              <div>
+                <span class="label">P(|0⟩)</span>
+                <span id="probZero" class="value"></span>
+              </div>
+              <div>
+                <span class="label">P(|1⟩)</span>
+                <span id="probOne" class="value"></span>
+              </div>
+              <div>
+                <span class="label">P(|+⟩)</span>
+                <span id="probPlus" class="value"></span>
+              </div>
+              <div>
+                <span class="label">P(|-⟩)</span>
+                <span id="probMinus" class="value"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-content">
+          <div>
+            <span id="footerYear"></span> · An independent project inspired from Blochy by kherb27
+          </div>
+          <div>
+            <a href="https://github.com/kherb27/Blochy" target="_blank" rel="noreferrer">
+              Original Blochy Repository
+            </a>
+          </div>
+          <div>by Subhra Chakraborti</div>
+          <div>
+            <a href="LICENSE.md" target="_blank" rel="noreferrer">MIT License</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

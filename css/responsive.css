@@ -1,0 +1,45 @@
+/*
+MIT License
+Copyright (c) 2025 Subhra Chakraborti
+*/
+@media (max-width: 900px) {
+  .site-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 700px) {
+  main {
+    padding: 32px 6vw 48px;
+  }
+
+  .hero {
+    gap: 24px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #blochCanvas {
+    height: 240px;
+  }
+}
