@@ -53,24 +53,34 @@ export class BlochSphere {
     this.scene.add(wire);
 
     const axisMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
-    const axes = new THREE.AxesHelper(1.2);
-    axes.setColors(axisMaterial.color, axisMaterial.color, axisMaterial.color);
-    this.scene.add(axes);
+    const axesGeometry = new THREE.BufferGeometry();
+    const axesPositions = new Float32Array([
+      -1.2, 0, 0, 1.2, 0, 0,
+      0, -1.2, 0, 0, 1.2, 0,
+      0, 0, -1.2, 0, 0, 1.2,
+    ]);
+    axesGeometry.setAttribute('position', new THREE.BufferAttribute(axesPositions, 3));
+    const axesLines = new THREE.LineSegments(axesGeometry, axisMaterial);
+    this.scene.add(axesLines);
 
     this.stateArrow = new THREE.ArrowHelper(
       new THREE.Vector3(0, 0, 1),
       new THREE.Vector3(0, 0, 0),
       1,
       this.arrowColor,
-      0.08,
-      0.06
+      0.15,
+      0.08
     );
+    this.stateArrow.line.material.linewidth = 3;
     this.scene.add(this.stateArrow);
 
     const pointGeo = new THREE.SphereGeometry(0.05, 16, 16);
     const pointMat = new THREE.MeshStandardMaterial({ color: this.pointColor, emissive: this.pointColor });
     this.statePoint = new THREE.Mesh(pointGeo, pointMat);
     this.scene.add(this.statePoint);
+
+    this.pathPoints = [];
+    this.pathLine = null;
   }
 
   updateFromAngles(theta, phi) {
@@ -80,6 +90,45 @@ export class BlochSphere {
     const direction = new THREE.Vector3(x, z, y).normalize();
     this.stateArrow.setDirection(direction);
     this.statePoint.position.copy(direction);
+    this.addPathPoint(direction);
+  }
+
+  addPathPoint(position) {
+    this.pathPoints.push(position.clone());
+    this.updatePathLine();
+  }
+
+  updatePathLine() {
+    if (this.pathLine) {
+      this.scene.remove(this.pathLine);
+    }
+
+    if (this.pathPoints.length > 1) {
+      const pathGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(this.pathPoints.length * 3);
+      this.pathPoints.forEach((point, i) => {
+        positions[i * 3] = point.x;
+        positions[i * 3 + 1] = point.y;
+        positions[i * 3 + 2] = point.z;
+      });
+      pathGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const pathMaterial = new THREE.LineBasicMaterial({
+        color: this.arrowColor,
+        transparent: true,
+        opacity: 0.4,
+        linewidth: 2,
+      });
+      this.pathLine = new THREE.Line(pathGeometry, pathMaterial);
+      this.scene.add(this.pathLine);
+    }
+  }
+
+  clearPath() {
+    if (this.pathLine) {
+      this.scene.remove(this.pathLine);
+      this.pathLine = null;
+    }
+    this.pathPoints = [];
   }
 
   rotateAroundAxis(axis, angle) {
@@ -101,6 +150,7 @@ export class BlochSphere {
     direction.applyAxisAngle(rotationAxis, angle);
     this.stateArrow.setDirection(direction);
     this.statePoint.position.copy(direction);
+    this.addPathPoint(direction);
 
     const { theta, phi } = this.getCurrentAngles();
     return { theta, phi };
@@ -117,6 +167,7 @@ export class BlochSphere {
   }
 
   reset(theta = Math.PI / 4, phi = Math.PI / 4) {
+    this.clearPath();
     this.updateFromAngles(theta, phi);
   }
 
@@ -131,6 +182,9 @@ export class BlochSphere {
     this.arrowColor = color;
     if (this.stateArrow) {
       this.stateArrow.setColor(new THREE.Color(color));
+    }
+    if (this.pathLine) {
+      this.pathLine.material.color.set(new THREE.Color(color));
     }
   }
 
