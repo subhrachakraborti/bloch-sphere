@@ -21,6 +21,10 @@ export class BlochSphere {
     this.controls.minDistance = 2.2;
     this.controls.maxDistance = 5;
 
+    this.sphereColor = 0x356aff;
+    this.arrowColor = 0x8e75ff;
+    this.pointColor = 0x6fe5ff;
+
     this.createScene();
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -35,13 +39,13 @@ export class BlochSphere {
 
     const sphereGeo = new THREE.SphereGeometry(1, 64, 64);
     const sphereMat = new THREE.MeshPhongMaterial({
-      color: 0x356aff,
+      color: this.sphereColor,
       transparent: true,
       opacity: 0.15,
       shininess: 60,
     });
-    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-    this.scene.add(sphere);
+    this.sphere = new THREE.Mesh(sphereGeo, sphereMat);
+    this.scene.add(this.sphere);
 
     const wireMat = new THREE.LineBasicMaterial({ color: 0x6fe5ff, transparent: true, opacity: 0.5 });
     const wireGeo = new THREE.WireframeGeometry(sphereGeo);
@@ -53,11 +57,18 @@ export class BlochSphere {
     axes.setColors(axisMaterial.color, axisMaterial.color, axisMaterial.color);
     this.scene.add(axes);
 
-    this.stateArrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 0), 1, 0x8e75ff, 0.08, 0.06);
+    this.stateArrow = new THREE.ArrowHelper(
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(0, 0, 0),
+      1,
+      this.arrowColor,
+      0.08,
+      0.06
+    );
     this.scene.add(this.stateArrow);
 
     const pointGeo = new THREE.SphereGeometry(0.05, 16, 16);
-    const pointMat = new THREE.MeshStandardMaterial({ color: 0x6fe5ff, emissive: 0x6fe5ff });
+    const pointMat = new THREE.MeshStandardMaterial({ color: this.pointColor, emissive: this.pointColor });
     this.statePoint = new THREE.Mesh(pointGeo, pointMat);
     this.scene.add(this.statePoint);
   }
@@ -69,6 +80,66 @@ export class BlochSphere {
     const direction = new THREE.Vector3(x, z, y).normalize();
     this.stateArrow.setDirection(direction);
     this.statePoint.position.copy(direction);
+  }
+
+  rotateAroundAxis(axis, angle) {
+    const direction = this.stateArrow.getDirection(new THREE.Vector3());
+    const rotationAxis = new THREE.Vector3();
+
+    switch (axis) {
+      case 'x':
+        rotationAxis.set(1, 0, 0);
+        break;
+      case 'y':
+        rotationAxis.set(0, 1, 0);
+        break;
+      case 'z':
+        rotationAxis.set(0, 0, 1);
+        break;
+    }
+
+    direction.applyAxisAngle(rotationAxis, angle);
+    this.stateArrow.setDirection(direction);
+    this.statePoint.position.copy(direction);
+
+    const { theta, phi } = this.getCurrentAngles();
+    return { theta, phi };
+  }
+
+  getCurrentAngles() {
+    const direction = this.stateArrow.getDirection(new THREE.Vector3());
+    const x = direction.x;
+    const y = direction.z;
+    const z = direction.y;
+    const theta = Math.acos(Math.min(1, Math.max(-1, z)));
+    const phi = Math.atan2(y, x);
+    return { theta, phi: phi < 0 ? phi + Math.PI * 2 : phi };
+  }
+
+  reset(theta = Math.PI / 4, phi = Math.PI / 4) {
+    this.updateFromAngles(theta, phi);
+  }
+
+  setSphereColor(color) {
+    this.sphereColor = color;
+    if (this.sphere) {
+      this.sphere.material.color.setHex(parseInt(color.replace('#', ''), 16));
+    }
+  }
+
+  setArrowColor(color) {
+    this.arrowColor = color;
+    if (this.stateArrow) {
+      this.stateArrow.setColor(new THREE.Color(color));
+    }
+  }
+
+  setPointColor(color) {
+    this.pointColor = color;
+    if (this.statePoint) {
+      this.statePoint.material.color.setHex(parseInt(color.replace('#', ''), 16));
+      this.statePoint.material.emissive.setHex(parseInt(color.replace('#', ''), 16));
+    }
   }
 
   resize() {

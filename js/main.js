@@ -30,6 +30,15 @@ const probOne = document.getElementById('probOne');
 const probPlus = document.getElementById('probPlus');
 const probMinus = document.getElementById('probMinus');
 
+const sphereColorInput = document.getElementById('sphereColor');
+const arrowColorInput = document.getElementById('arrowColor');
+const pointColorInput = document.getElementById('pointColor');
+const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+const clearBtn = document.getElementById('clearBtn');
+const exportPdfBtn = document.getElementById('exportPdfBtn');
+const customAngleInput = document.getElementById('customAngle');
+const rotateCustomBtn = document.getElementById('rotateCustomBtn');
+
 let currentState = stateFromAngles(Math.PI / 4, Math.PI / 4);
 
 const updateUI = (updateSliders = true) => {
@@ -97,6 +106,24 @@ const applyPreset = (preset) => {
   updateUI(true);
 };
 
+const handleRotation = (axis, direction) => {
+  const angle = direction === '+' ? Math.PI / 12 : -Math.PI / 12;
+  const { theta, phi } = blochSphere.rotateAroundAxis(axis, angle);
+  currentState = stateFromAngles(theta, phi);
+  presetState.value = 'custom';
+  updateUI(false);
+};
+
+const handleCustomRotation = () => {
+  const angleDeg = Number.parseFloat(customAngleInput.value) || 15;
+  const angle = (angleDeg * Math.PI) / 180;
+  const axis = 'z';
+  const { theta, phi } = blochSphere.rotateAroundAxis(axis, angle);
+  currentState = stateFromAngles(theta, phi);
+  presetState.value = 'custom';
+  updateUI(false);
+};
+
 presetState.addEventListener('change', (event) => {
   applyPreset(event.target.value);
 });
@@ -126,6 +153,117 @@ Array.from(document.querySelectorAll('.gate-btn')).forEach((button) => {
     presetState.value = 'custom';
     updateUI(true);
   });
+});
+
+Array.from(document.querySelectorAll('.rotation-btn')).forEach((button) => {
+  button.addEventListener('click', () => {
+    const axis = button.dataset.axis;
+    const direction = button.dataset.dir;
+    handleRotation(axis, direction);
+  });
+});
+
+rotateCustomBtn.addEventListener('click', handleCustomRotation);
+customAngleInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    handleCustomRotation();
+  }
+});
+
+sphereColorInput.addEventListener('input', (e) => {
+  blochSphere.setSphereColor(e.target.value);
+});
+
+arrowColorInput.addEventListener('input', (e) => {
+  blochSphere.setArrowColor(e.target.value);
+});
+
+pointColorInput.addEventListener('input', (e) => {
+  blochSphere.setPointColor(e.target.value);
+});
+
+resetSettingsBtn.addEventListener('click', () => {
+  sphereColorInput.value = '#356aff';
+  arrowColorInput.value = '#8e75ff';
+  pointColorInput.value = '#6fe5ff';
+  blochSphere.setSphereColor('#356aff');
+  blochSphere.setArrowColor('#8e75ff');
+  blochSphere.setPointColor('#6fe5ff');
+});
+
+clearBtn.addEventListener('click', () => {
+  const initialTheta = Math.PI / 4;
+  const initialPhi = Math.PI / 4;
+  currentState = stateFromAngles(initialTheta, initialPhi);
+  blochSphere.reset(initialTheta, initialPhi);
+  presetState.value = 'custom';
+  updateUI(true);
+});
+
+exportPdfBtn.addEventListener('click', async () => {
+  const { jsPDF } = window.jspdf;
+  const exportBtnOriginalText = exportPdfBtn.innerHTML;
+  exportPdfBtn.innerHTML = '<span class="btn-icon">⏳</span> Exporting...';
+  exportPdfBtn.disabled = true;
+
+  try {
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 15;
+
+    pdf.setFontSize(20);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Bloch Sphere Lab - Quantum State Visualization', margin, margin + 5);
+
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.setTextColor(100);
+    pdf.text(`Generated: ${new Date().toLocaleString()}`, margin, margin + 12);
+
+    const heroVisual = document.querySelector('.hero-visual');
+    const canvasElement = document.getElementById('blochCanvas');
+
+    pdf.setTextColor(0);
+    pdf.setFontSize(12);
+    pdf.text(`State (|0⟩/|1⟩ basis): ${stateComp.textContent}`, margin, margin + 25);
+    pdf.text(`State (|+⟩/|-⟩ basis): ${stateHadamard.textContent}`, margin, margin + 32);
+    pdf.text(`State (|i⟩/|-i⟩ basis): ${stateY.textContent}`, margin, margin + 39);
+
+    pdf.text(`θ: ${thetaValue.textContent}`, margin, margin + 52);
+    pdf.text(`φ: ${phiValue.textContent}`, margin + 40, margin + 52);
+    pdf.text(`Vector: ${vectorValue.textContent}`, margin + 80, margin + 52);
+
+    pdf.text(`P(|0⟩): ${probZero.textContent}`, margin, margin + 65);
+    pdf.text(`P(|1⟩): ${probOne.textContent}`, margin + 40, margin + 65);
+    pdf.text(`P(|+⟩): ${probPlus.textContent}`, margin + 80, margin + 65);
+    pdf.text(`P(|-⟩): ${probMinus.textContent}`, margin + 115, margin + 65);
+
+    const canvasImage = await html2canvas(heroVisual, {
+      backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-soft').trim() || '#141b24',
+      scale: 2,
+      logging: false,
+    });
+
+    const imgData = canvasImage.toDataURL('image/png');
+    const imgWidth = pageWidth - margin * 2;
+    const imgHeight = (canvasImage.height * imgWidth) / canvasImage.width;
+
+    pdf.addImage(imgData, 'PNG', margin, margin + 75, imgWidth, Math.min(imgHeight, pageHeight - margin - 90));
+
+    pdf.save('bloch-sphere-visualization.pdf');
+  } catch (error) {
+    console.error('PDF export error:', error);
+    alert('Failed to export PDF. Please try again.');
+  } finally {
+    exportPdfBtn.innerHTML = exportBtnOriginalText;
+    exportPdfBtn.disabled = false;
+  }
 });
 
 initThemeToggle();
