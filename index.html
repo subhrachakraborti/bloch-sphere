@@ -16,6 +16,8 @@ Copyright (c) 2025 Subhra Chakraborti
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   </head>
   <body>
     <div class="page" data-theme="dark">
@@ -131,6 +133,75 @@ Copyright (c) 2025 Subhra Chakraborti
                 <span class="label">P(|-⟩)</span>
                 <span id="probMinus" class="value"></span>
               </div>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <h2>Rotation Controls</h2>
+            <p class="muted">Rotate the state vector around an axis.</p>
+            <div class="rotation-grid">
+              <button class="rotation-btn" data-axis="x" data-dir="+">
+                <span class="axis-label">X</span>
+                <span class="axis-icon">+</span>
+              </button>
+              <button class="rotation-btn" data-axis="x" data-dir="-">
+                <span class="axis-label">X</span>
+                <span class="axis-icon">−</span>
+              </button>
+              <button class="rotation-btn" data-axis="y" data-dir="+">
+                <span class="axis-label">Y</span>
+                <span class="axis-icon">+</span>
+              </button>
+              <button class="rotation-btn" data-axis="y" data-dir="-">
+                <span class="axis-label">Y</span>
+                <span class="axis-icon">−</span>
+              </button>
+              <button class="rotation-btn" data-axis="z" data-dir="+">
+                <span class="axis-label">Z</span>
+                <span class="axis-icon">+</span>
+              </button>
+              <button class="rotation-btn" data-axis="z" data-dir="-">
+                <span class="axis-label">Z</span>
+                <span class="axis-icon">−</span>
+              </button>
+            </div>
+            <div class="custom-rotation">
+              <label for="customAngle">Custom angle (°)</label>
+              <div class="input-with-btn">
+                <input id="customAngle" type="number" min="1" max="360" value="15" />
+                <button id="rotateCustomBtn" class="action-btn small">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <h2>Settings</h2>
+            <div class="settings-group">
+              <label for="sphereColor">Sphere Color</label>
+              <input id="sphereColor" type="color" value="#356aff" />
+            </div>
+            <div class="settings-group">
+              <label for="arrowColor">Arrow Color</label>
+              <input id="arrowColor" type="color" value="#8e75ff" />
+            </div>
+            <div class="settings-group">
+              <label for="pointColor">Point Color</label>
+              <input id="pointColor" type="color" value="#6fe5ff" />
+            </div>
+            <button id="resetSettingsBtn" class="action-btn secondary">Reset Defaults</button>
+          </div>
+
+          <div class="control-card">
+            <h2>Actions</h2>
+            <div class="actions-grid">
+              <button id="clearBtn" class="action-btn danger">
+                <span class="btn-icon">↺</span>
+                Reset State
+              </button>
+              <button id="exportPdfBtn" class="action-btn success">
+                <span class="btn-icon">↓</span>
+                Export PDF
+              </button>
             </div>
           </div>
         </section>

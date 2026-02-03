@@ -31,6 +31,27 @@ Copyright (c) 2025 Subhra Chakraborti
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .rotation-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+
+  .rotation-btn {
+    padding: 8px 4px;
+  }
+
+  .axis-label {
+    font-size: 0.8rem;
+  }
+
+  .axis-icon {
+    font-size: 0.9rem;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -41,5 +62,9 @@ Copyright (c) 2025 Subhra Chakraborti
 
   #blochCanvas {
     height: 240px;
+  }
+
+  .rotation-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
